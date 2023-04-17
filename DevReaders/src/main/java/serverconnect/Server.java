@@ -27,8 +27,8 @@ public class Server {
 	public void start() {
 		try {
 			// Crear una conexión a la base de datos PostgreSQL
-			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/biblioteca", "usuario",
-					"contraseña");
+			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/library", "postgres",
+					"super3");
 			System.out.println("Conexión a la base de datos establecida.");
 
 			// Crear el socket del servidor en el puerto especificado
