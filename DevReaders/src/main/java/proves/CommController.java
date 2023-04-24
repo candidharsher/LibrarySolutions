@@ -1,4 +1,4 @@
-package serverconnect;
+package proves;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,7 +11,6 @@ import java.util.concurrent.CountDownLatch;
 
 import com.google.gson.Gson;
 import java.io.OutputStream;
-import model.Usuari;
 
 
 /**
@@ -26,6 +25,7 @@ public static final String UPDATE_USER = "UPDATE_USER";
     private static int sessionCode=BAD_VALUE;
     private static int port=BAD_VALUE;
     private static String serverName="kandula.db.elephantsql.com";
+    
 
     public static final int OK_RETURN_CODE = 0;
 
@@ -46,7 +46,7 @@ public static final String UPDATE_USER = "UPDATE_USER";
         }else {
             try {
                 s= new Socket();
-                s.connect(new InetSocketAddress(serverName,port),4000);
+                s.connect(new InetSocketAddress(serverName,5432),4000);
 
                 return s;
             } catch (IOException ex) {
@@ -185,7 +185,7 @@ public static final String UPDATE_USER = "UPDATE_USER";
         if(username==1) { // simulates non-existent key
             return null;
         }else{
-            return new Usuari(username,"Mock value", "Mock value");
+            return new Usuari(username,"Mock value", "Mock value", "Mock value");
         }
     }
 
@@ -324,13 +324,22 @@ private static void propagateUpdateToOtherInstances(Usuari user) {
     CountDownLatch latch = new CountDownLatch(serverInstances.length);
 
     for (int i = 0; i < serverInstances.length; i++) {
-        try (Socket socket = new Socket(serverInstances[i], serverPorts[i])) {
+        Socket socket = null;
+        try {
+            socket = new Socket(serverInstances[i], serverPorts[i]);
             OutputStream outputStream = socket.getOutputStream();
             PrintWriter writer = new PrintWriter(outputStream, true);
             writer.println(jsonUser);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             latch.countDown();
         }
     }

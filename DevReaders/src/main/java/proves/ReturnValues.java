@@ -2,21 +2,21 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package serverconnect;
+package proves;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author User
  */
-import java.util.ArrayList;
-import java.util.List;
-
-public class EndPointValues {
-    private String endpoint;
+public class ReturnValues {
+    private int returnCode;
     private List<Object> data;
 
-    public EndPointValues(String endpoint) {
-        this.endpoint = endpoint;
+    public ReturnValues(int returnCode) {
+        this.returnCode = returnCode;
         data = new ArrayList<Object>();
     }
 
@@ -28,8 +28,8 @@ public class EndPointValues {
         data.add(obj);
     }
 
-    public String getEndpoint() {
-        return endpoint;
+    public int getReturnCode() {
+        return returnCode;
     }
 
     public List<Object> getData() {
@@ -40,3 +40,4 @@ public class EndPointValues {
         return clazz.cast(data.get(index));
     }
 }
+
