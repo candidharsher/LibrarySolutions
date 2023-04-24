@@ -6,13 +6,10 @@ import java.sql.*;
 
 public class Server {
 	/*
-	 * La classe Server permetrà establir una connexió a la base de dades
-	 * PostgreSQL i obrir un socket per escoltar connexions de clients. La classe
-	 * ClientHandler s'encarregarà de manejar cada connexió individual amb un
-	 * client, incloent-hi l'autenticació de l'usuari mitjançant el procés de login
-	 * i logout. La classe Usuari representa el model de dades d'un usuari a la
-	 * nostra aplicació i la classe Client representa el model de dades d'un client
-	 * connectat al servidor.
+	 * La classe Server permetrà establir una connexió a la base de dades PostgreSQL
+	 * i obrir un socket per escoltar connexions de clients.  La classe
+	 * Usuari representa el model de dades d'un usuari a la nostra aplicació i la
+	 * classe Client representa el model de dades d'un client connectat al servidor.
 	 */
 	private int port;
 	private ServerSocket serverSocket;
@@ -27,28 +24,38 @@ public class Server {
 	public void start() {
 		try {
 			// Crear una conexión a la base de datos PostgreSQL
-			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/library", "postgres",
-					"super3");
+			String url = "jdbc:postgresql://kandula.db.elephantsql.com/uiomrdwe";
+			String user = "uiomrdwe";
+			String password = "zYBtVHDLBIrm7YGFMPvcm7daP5Fru0hL";
+			int port = 5432;
+			this.port = port;
+			Connection connection = DriverManager.getConnection(url, user, password);
 			System.out.println("Conexión a la base de datos establecida.");
-
 			// Crear el socket del servidor en el puerto especificado
 			serverSocket = new ServerSocket(port);
 			System.out.println("Servidor iniciado en el puerto " + port + "...");
-
 			running = true;
 			while (running) {
 				// Esperar a que un cliente se conecte
 				Socket clientSocket = serverSocket.accept();
 				System.out.println("Cliente conectado desde " + clientSocket.getInetAddress());
-
 				// Crear un nuevo hilo para manejar la conexión con el cliente
-				ClientHandler clientHandler = new ClientHandler(clientSocket, connection);
-				clientHandler.start();
+				Client client = new Client(url, port);
+				client.start();
+				if (clientSocket.isClosed()) {
+					running = false;
+				}
+				if (running == false) {
+					stop();
+				}
 			}
 		} catch (IOException e) {
 			System.out.println("Error al iniciar el servidor: " + e.getMessage());
 		} catch (SQLException e) {
 			System.out.println("Error al conectar a la base de datos: " + e.getMessage());
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -78,8 +85,8 @@ public class Server {
 
 		// Crear instancia del servidor
 		Server server = new Server(port);
-
 		// Iniciar el servidor
 		server.start();
+		System.out.println("server start");
 	}
 }
