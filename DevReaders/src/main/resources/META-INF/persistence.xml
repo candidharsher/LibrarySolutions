@@ -5,7 +5,7 @@
           http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
           version="2.2">
 <persistence-unit name="public" transaction-type="RESOURCE_LOCAL">
-<class>serverconnect.Usuari</class>
+<class>proves.Usuari</class>
 <properties>
 <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
 <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://kandula.db.elephantsql.com:5432/uiomrdwe"/>

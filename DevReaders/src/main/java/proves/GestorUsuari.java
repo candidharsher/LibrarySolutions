@@ -33,16 +33,23 @@ public class GestorUsuari {
      * @throws SQLException si no s'ha pogut fer la inserció
      */
     public void registrarUsuari(Usuari usuari) throws SQLException {
-        //TODO
-        PreparedStatement ps;  
-        String sql = "INSERT INTO library1.usuaris(id_usuari, nom_usuari, cognoms_usuari, email_usuari, contransenya_usuari, rol_usuari)VALUES ("+usuari.getId()+","+usuari.getNombre()+","+usuari.getApellidos()+","+usuari.getContrasenia()+","+usuari.getContrasenia()+","+usuari.getRol()+");";
-          try{
-          ps = conn.prepareStatement(sql);
-          ps.executeQuery();
-          ps.close();
-          }catch(SQLException ex){
-              LOGGER.log(Level.SEVERE, null, ex);
-          }
+        String sql = "INSERT INTO public.usuaris(id_usuari, nom_usuari, cognoms_usuari, email_usuari, contransenya_usuari, rol_usuari) VALUES (?, ?, ?, ?, ?, ?)";
+        if (usuari.getId() == null) {
+            LOGGER.log(Level.SEVERE, "El id del usuario es nulo");
+            return;
+        }
+        try {
+        	PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, usuari.getId());
+            ps.setString(2, usuari.getNombre());
+            ps.setString(3, usuari.getApellidos());
+            ps.setString(4, usuari.getEmail());
+            ps.setString(5, usuari.getContrasenia());
+            ps.setString(6, usuari.getRol());
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -54,15 +61,16 @@ public class GestorUsuari {
      */
     public void eliminarUsuari(String nom){
         //TODO
-        String sql= "DELETE FROM library1.usuaris WHERE nom_usuari ="+ nom +";";
+    	String sql = "DELETE FROM public.usuaris WHERE nom_usuari = ?";
         PreparedStatement ps;
-        try{
-          ps = conn.prepareStatement(sql);
-          ps.executeQuery();
-          ps.close();
-          }catch(SQLException ex){
-              LOGGER.log(Level.SEVERE, null, ex);
-          }
+        try {
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, nom);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -75,7 +83,7 @@ public class GestorUsuari {
     public void modificarUsuari(Usuari usuari){
         //TODO
         PreparedStatement ps;  
-        String sql = "UPDATE library1.usuaris SET id_usuari="+usuari.getId()+", nom_usuari="+usuari.getNombre()+", cognoms_usuari="+usuari.getApellidos()+", email_usuari="+usuari.getEmail()+", contransenya_usuari="+usuari.getContrasenia()+", rol_usuari="+usuari.getRol()+"WHERE id_usuari="+usuari.getId()+";";
+        String sql = "UPDATE public.usuaris SET id_usuari="+usuari.getId()+", nom_usuari="+usuari.getNombre()+", cognoms_usuari="+usuari.getApellidos()+", email_usuari="+usuari.getEmail()+", contransenya_usuari="+usuari.getContrasenia()+", rol_usuari="+usuari.getRol()+"WHERE id_usuari="+usuari.getId()+";";
           try{
           ps = conn.prepareStatement(sql);
           ps.executeQuery();
@@ -92,28 +100,22 @@ public class GestorUsuari {
      * @return l'usuari, null si no existeix
      * @throws SQLException si no s'ha pogut obtenir (error accedint a la base de dades)
      */
-    public Usuari iniciarSessio(String nomUsuari)  {
-        //TODO
+    public Usuari iniciarSessio(String nomUsuari) {
         Usuari us = null;
         ResultSet rs = null;
-PreparedStatement pstm=null;
-try {
-pstm = conn.prepareStatement("SELECT id_usuari, nom_usuari, cognoms_usuari, email_usuari, contransenya_usuari, rol_usuari FROM library1.usuaris WHERE nom="+nomUsuari);
-pstm.setString(1, nomUsuari);
-rs = pstm.executeQuery();
-while (rs.next()) {
-    /*id_usuari serial NOT NULL,
-    nom_usuari character varying(32) NOT NULL,
-    cognoms_usuari character varying(64) NOT NULL,
-    email_usuari TEXT NOT NULL,
-    contransenya_usuari TEXT NOT NULL,
-    rol_usuari TEXT NOT NULL,*/
+        PreparedStatement pstm = null;
+        try {
+            pstm = conn.prepareStatement("SELECT id_usuari, nom_usuari, cognoms_usuari, email_usuari, contransenya_usuari, rol_usuari FROM public.usuaris WHERE nom_usuari = ?");
+            pstm.setString(1, nomUsuari);
+            rs = pstm.executeQuery();
+            while (rs.next()) {
                 String nom = rs.getString("nom_usuari");
-                int id = rs.getInt("id");
+                int id = rs.getInt("id_usuari");
                 String cognoms_usuari = rs.getString("cognoms_usuari");
                 String email = rs.getString("email_usuari");
                 String contrassenya = rs.getString("contransenya_usuari");
                 String rol_usuari = rs.getString("rol_usuari");
+                us = new Usuari();
                 us.setNombre(nom);
                 us.setApellidos(cognoms_usuari);
                 us.setEmail(email);
@@ -123,9 +125,19 @@ while (rs.next()) {
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, null, e);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstm != null) {
+                    pstm.close();
+                }
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+            }
         }
         return us;
-    
-
     }
+
 }

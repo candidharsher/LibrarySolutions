@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class test {
     public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException {
-        String url = "postgres://uiomrdwe:zYBtVHDLBIrm7YGFMPvcm7daP5Fru0hL@kandula.db.elephantsql.com/uiomrdwe";
+        String url = "jdbc:postgresql://kandula.db.elephantsql.com:5432/uiomrdwe";
         String usuari = "uiomrdwe";
         String contrasenya = "zYBtVHDLBIrm7YGFMPvcm7daP5Fru0hL";
         Class.forName("org.postgresql.Driver");
@@ -21,23 +21,25 @@ public class test {
         conn.setAutoCommit(true);
         GestorUsuari gestor = new GestorUsuari(conn);
         List<Usuari> llistaUsuaris = creaLlista();
-        TestRegister(llistaUsuaris, gestor);
-        System.out.println("usuaris afegits a la BD library");
-        Client client = new Client(5432,"localhost");
+        // OK: TestRegister(llistaUsuaris, gestor);
+      //System.out.println("usuaris afegits a la BD library");
+        //OK: System.out.println(iniciarSessioTest(llistaUsuaris, gestor).toString());
+        eliminarUsuariTest(gestor, "valentina");
+        Client client = new Client(5432,"kandula.db.elephantsql.com");
         Servidor servidor = new Servidor(client);
         client.connexioClient(llistaUsuaris.get(1));
         servidor.connexioServidor();
     }
      private static List<Usuari> creaLlista() {
         return Arrays.asList(
-                new Usuari(1, "juanma", "aguilar", "a", "a", "admin"),
-                new Usuari(2, "afri", "pacheco", "a", "a",  "admin"),
-                new Usuari(3, "joan", "marti", "a", "a",  "admin"),
-                new Usuari(4, "jana", "cruz", "a", "a",  "admin"),
-                new Usuari(5, "valentina", "daniela", "a", "a",  "admin"),
-                new Usuari(6, "paula", "perez", "a", "a",  "admin"),
-                new Usuari(7, "marta", "freixas", "a", "a",  "admin"),
-                new Usuari(8, "anna", "lavin", "a", "a",  "admin")
+                new Usuari(9, "juanma", "aguilar", "a", "a@a.com", "admin"),
+                new Usuari(2, "afri", "pacheco", "a", "a@a.com",  "admin"),
+                new Usuari(3, "joan", "marti", "a", "aa@a.com",  "admin"),
+                new Usuari(4, "jana", "cruz", "a", "aa@a.com",  "admin"),
+                new Usuari(5, "valentina", "daniela", "a", "aa@a.com",  "admin"),
+                new Usuari(6, "paula", "perez", "a", "aa@a.com",  "admin"),
+                new Usuari(7, "marta", "freixas", "a", "aa@a.com",  "admin"),
+                new Usuari(8, "anna", "lavin", "a", "aa@a.com",  "admin")
         );
     }
       /**
@@ -58,19 +60,17 @@ public class test {
     
     public static Usuari iniciarSessioTest(List<Usuari> usuaris, GestorUsuari gestor) throws SQLException {
         System.out.println("obtenir usuaris de la bd");
-        Usuari expResult = usuaris.get(1);
-        Usuari result = gestor.iniciarSessio(usuaris.get(1).getNombre());
-        if(expResult==result){
+        Usuari result = gestor.iniciarSessio(usuaris.get(0).getNombre());
+     
             return result;
-        }
-        return null;
+        
     }
 
     /**
      * Test of eliminarUsuari method, of class GestorUsuari.
      */
     
-    public static void EliminarUsuariTest(GestorUsuari gestor, String nom) throws SQLException {
+    public static void eliminarUsuariTest(GestorUsuari gestor, String nom) throws SQLException {
         System.out.println("eliminar usuari de la bd");        
         gestor.eliminarUsuari(nom);
   

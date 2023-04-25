@@ -25,7 +25,7 @@ public class Servidor {
         }
         //entorno de ejecucion
       public boolean connexioServidor() throws IOException, ClassNotFoundException{
-          ServerSocket serverSocket = new ServerSocket(this.client.getPort());
+          ServerSocket serverSocket = new ServerSocket(5432);
         Socket clientSocket = serverSocket.accept();
         ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
         ArrayList<Usuari> usuarisConnectats = new ArrayList<Usuari>();
