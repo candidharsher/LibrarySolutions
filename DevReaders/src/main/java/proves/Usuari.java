@@ -1,6 +1,7 @@
 package proves;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -8,25 +9,29 @@ import javax.persistence.*;
 @Table(name = "usuaris", schema = "public")
 public class Usuari implements Serializable{
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_usuari")
-	private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_usuari")
+    private Integer id;
 
-	@Column(name = "nom_usuari", length = 32, nullable = false)
-	private String nombre;
+    @Column(name = "nom_usuari", length = 32, nullable = false)
+    private String nombre;
 
-	@Column(name = "cognoms_usuari", length = 64, nullable = false)
-	private String apellidos;
+    @Column(name = "cognoms_usuari", length = 64, nullable = false)
+    private String apellidos;
 
-	@Column(name = "email_usuari", length = 255, nullable = false)
-	private String email;
+    @Column(name = "email_usuari", length = 255, nullable = false)
+    private String email;
 
-	@Column(name = "contransenya_usuari", length = 255, nullable = false)
-	private String contrasenia;
+    @Column(name = "contransenya_usuari", length = 255, nullable = false)
+    private String contrasenia;
 
-	@Column(name = "rol_usuari", length = 255, nullable = false)
-	private String rol;
+    @Column(name = "rol_usuari", length = 255, nullable = false)
+    private String rol;
+
+    @OneToMany(mappedBy = "usuari")
+    private List<Prestec> prestecs;
+
 
 	// Constructor por defecto (necesario para JPA)
 	public Usuari() {
@@ -107,5 +112,14 @@ public class Usuari implements Serializable{
 		return "Usuari [id=" + id + ", nombre=" + nombre + ", apellidos=" + apellidos + ", email=" + email
 				+ ", contrasenia=" + "***" + ", rol=" + rol + "]";
 	}
+
+	public List<Prestec> getPrestecs() {
+		return prestecs;
+	}
+
+	public void setPrestecs(List<Prestec> prestecs) {
+		this.prestecs = prestecs;
+	}
+	
 
 }

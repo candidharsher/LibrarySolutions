@@ -21,10 +21,10 @@ public class test {
         conn.setAutoCommit(true);
         GestorUsuari gestor = new GestorUsuari(conn);
         List<Usuari> llistaUsuaris = creaLlista();
-        // OK: TestRegister(llistaUsuaris, gestor);
-      //System.out.println("usuaris afegits a la BD library");
-        //OK: System.out.println(iniciarSessioTest(llistaUsuaris, gestor).toString());
-        eliminarUsuariTest(gestor, "valentina");
+        //TestRegister(llistaUsuaris, gestor);
+        //System.out.println("usuaris afegits a la BD library");
+        //System.out.println(iniciarSessioTest(llistaUsuaris, gestor).toString());
+        eliminarUsuariTest(gestor, "devreader");
         Client client = new Client(5432,"kandula.db.elephantsql.com");
         Servidor servidor = new Servidor(client);
         client.connexioClient(llistaUsuaris.get(1));
@@ -32,14 +32,14 @@ public class test {
     }
      private static List<Usuari> creaLlista() {
         return Arrays.asList(
-                new Usuari(9, "juanma", "aguilar", "a", "a@a.com", "admin"),
-                new Usuari(2, "afri", "pacheco", "a", "a@a.com",  "admin"),
-                new Usuari(3, "joan", "marti", "a", "aa@a.com",  "admin"),
-                new Usuari(4, "jana", "cruz", "a", "aa@a.com",  "admin"),
-                new Usuari(5, "valentina", "daniela", "a", "aa@a.com",  "admin"),
-                new Usuari(6, "paula", "perez", "a", "aa@a.com",  "admin"),
-                new Usuari(7, "marta", "freixas", "a", "aa@a.com",  "admin"),
-                new Usuari(8, "anna", "lavin", "a", "aa@a.com",  "admin")
+                new Usuari(13, "juanma", "aguilar", "a", "qa@a.com", "admin"),
+                new Usuari(14, "afri", "pacheco", "a", "wa@a.com",  "admin"),
+                new Usuari(15, "joan", "marti", "a", "eaa@a.com",  "admin"),
+                new Usuari(16, "jana", "cruz", "a", "raa@a.com",  "admin"),
+                new Usuari(17, "valentina", "daniela", "a", "taa@a.com",  "admin"),
+                new Usuari(18, "paula", "perez", "a", "yaa@a.com",  "admin"),
+                new Usuari(19, "marta", "freixas", "a", "uaa@a.com",  "admin"),
+                new Usuari(20, "anna", "lavin", "a", "iaa@a.com",  "admin")
         );
     }
       /**
@@ -58,9 +58,9 @@ public class test {
      * Test of iniciarSessio method, of class GestorUsuari.
      */
     
-    public static Usuari iniciarSessioTest(List<Usuari> usuaris, GestorUsuari gestor) throws SQLException {
+    public static Usuari iniciarSessioTest(List<Usuari> llista, GestorUsuari gestor) throws SQLException {
         System.out.println("obtenir usuaris de la bd");
-        Usuari result = gestor.iniciarSessio(usuaris.get(0).getNombre());
+        Usuari result = gestor.iniciarSessio(llista.get(0).getNombre());
      
             return result;
         
