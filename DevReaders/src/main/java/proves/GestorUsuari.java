@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  */
 public class GestorUsuari {
 	static final Logger LOGGER = Logger.getLogger(GestorUsuari.class.getName());
-
+	static List<Usuari> usuarisConnectats = new ArrayList<Usuari>();
 	Connection conn;
 
 	public GestorUsuari(Connection conn) {
@@ -57,6 +57,7 @@ public class GestorUsuari {
 		} catch (SQLException ex) {
 			LOGGER.log(Level.SEVERE, null, ex);
 		}
+		this.usuarisConnectats.add(usuari);
 	}
 
 	/**
@@ -147,6 +148,7 @@ public class GestorUsuari {
 				LOGGER.log(Level.SEVERE, null, ex);
 			}
 		}
+		this.usuarisConnectats.add(us);
 		return us;
 	}
 
@@ -237,6 +239,47 @@ public class GestorUsuari {
 		}
 
 		return llibre;
+	}
+
+	/*
+	 * Esta función otorgarRol verifica si el usuario que llama a la función tiene
+	 * el rol de administrador ("admin"). Si es así, ejecuta la consulta de
+	 * actualización para cambiar el rol del usuario especificado por usuari.getId()
+	 * al nuevo rol especificado por nuevoRol. Si el usuario que llama a la función
+	 * no tiene el rol de administrador, se registra un mensaje de advertencia
+	 */
+	public void otorgarRol(Usuari usuari, String nuevoRol) {
+		if (usuari.getRol().equals("admin")) {
+			String sql = "UPDATE public.usuaris SET rol_usuari = ? WHERE id_usuari = ?";
+
+			try {
+				PreparedStatement ps = conn.prepareStatement(sql);
+				ps.setString(1, nuevoRol);
+				ps.setInt(2, usuari.getId());
+				ps.executeUpdate();
+				ps.close();
+			} catch (SQLException ex) {
+				LOGGER.log(Level.SEVERE, null, ex);
+			}
+		} else {
+			LOGGER.log(Level.SEVERE, "No tens permisos d'administrador per atorgar rols.");
+		}
+	}
+
+	public void logout(Usuari usuari) {
+		// Elimina el usuario de la lista de usuarios conectados
+		this.getUsuarisConnectats().remove(usuari);
+
+		// Realiza las acciones necesarias para cerrar la sesión del usuario
+		// Por ejemplo, cerrar la conexión con la base de datos, eliminar tokens de
+		// sesión, etc.
+
+		System.out.println("Sesión cerrada correctamente para el usuario: " + usuari.getNombre());
+	}
+
+	private List<Usuari> getUsuarisConnectats() {
+		// TODO Auto-generated method stub
+		return this.usuarisConnectats;
 	}
 
 }
